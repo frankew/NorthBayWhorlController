@@ -73,9 +73,13 @@ uint32_t cTurqsBackground = whorl[0].ColorHSV(29120,  250,  25);
 uint32_t cPinkySwearBackground = whorl[0].ColorHSV(57000,  250,  15);
 
 void setup() {
-  randomSeed(analogRead(0)); //some noise for random seed 
-  Serial.begin(115200);
 
+  Serial.begin(115200);      // Just for development
+  randomSeed(analogRead(0)); //some noise for random seed 
+
+  checkBrushesAndCanvases();
+
+  // Setup  neopixels
   pinMode(RING0_PIN, OUTPUT);
   pinMode(RING1_PIN, OUTPUT);
   pinMode(RING2_PIN, OUTPUT);
@@ -86,40 +90,36 @@ void setup() {
   pinMode(RING7_PIN, OUTPUT);
   pinMode(RING8_PIN, OUTPUT);
   pinMode(RING9_PIN, OUTPUT);
-
   for(uint8_t i=0; i < RING_COUNT; i++) {
     whorl[i].begin();
     whorl[i].setBrightness(100);
   }
 
-  checkBrushesAndCanvases();
-
-  HSV brushColor;
-  
-  brushColor.h = 90; // random(115, 135); //  
-  brushColor.s = 195; 
-  brushColor.v = 170; // most "intense" color
-  
-  int brushSpeed = 4096/2; // Max
+  // Configure the brushes
+  HSV paintColor;
+  paintColor.h = 90; // random(115, 135); //  
+  paintColor.s = 195; 
+  paintColor.v = 170; 
+  int brushSpeed = 4096/2; // 4096 is Max
   int fadeSpeed = 255; // Max
   bool shouldFadeOut = true;
   bool shouldFadeIn = true;
-
   for(uint8_t i=0; i < RING_COUNT; i++) {
     waveBrushes[i].setSpeed(brushSpeed); 
     waveBrushes[i].setFadein(shouldFadeIn);
     waveBrushes[i].setFadeout(shouldFadeOut);
     waveBrushes[i].setFadeSpeed(fadeSpeed);
-    waveBrushes[i].setColor(brushColor);
+    waveBrushes[i].setColor(paintColor);
   }
-  brushColor.h = 175; // Pink
-  brushColor.s = 255; 
-  waveBrushes[TRANSITION_RING].setColor(brushColor);
+  // one ring "TRANSITION_RING" gets readjusted 
+  paintColor.h = 175; // Pink
+  paintColor.s = 255; 
+  waveBrushes[TRANSITION_RING].setColor(paintColor);
 
 }
 
 void loop() {
-
+  // clear the neopixels and set fresh background colors
   for(uint8_t i=0; i < RING_COUNT; i++) {
     whorl[i].clear();
     for (uint8_t j=0; j < whorl[i].numPixels(); j++) {
@@ -131,17 +131,17 @@ void loop() {
     }
   }
     
-  // brush to canvas
+  // paint the canvases (and update brushes)
   for(int i=0; i < RING_COUNT; i++) {
     waveBrushes[i].paint();
   }  
 
-  // canvas to the neopixels
+  // transfer canvases to the neopixels
   for(int i=0; i < RING_COUNT; i++) {
     pixelCanvases[i].transfer();
   }  
   
-  // show neopixels
+  // show the neopixels
   for(int i=0; i < RING_COUNT; i++) {
     whorl[i].show();
   }
