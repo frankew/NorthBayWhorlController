@@ -1,6 +1,7 @@
 #include <Adafruit_NeoPixel.h>
 #include <NeoPixelPainter.h>
 
+
 #define RING0_PIN  51
 #define RING1_PIN  49
 #define RING2_PIN  47
@@ -74,10 +75,10 @@ uint32_t cPinkySwearBackground = whorl[0].ColorHSV(57000,  250,  15);
 
 void setup() {
 
-  Serial.begin(115200);      // Just for development
   randomSeed(analogRead(0)); //some noise for random seed 
 
-  checkBrushesAndCanvases();
+  Serial.begin(115200);      // Just for development
+  checkBrushesAndCanvases(); // check if ram allocation of brushes and canvases was successful (painting will not work if unsuccessful, program should still run though)
 
   // Setup  neopixels
   pinMode(RING0_PIN, OUTPUT);
@@ -111,11 +112,10 @@ void setup() {
     waveBrushes[i].setFadeSpeed(fadeSpeed);
     waveBrushes[i].setColor(paintColor);
   }
-  // one ring "TRANSITION_RING" gets readjusted 
+  // the brush the "TRANSITION_RING" gets readjusted 
   paintColor.h = 175; // Pink
   paintColor.s = 255; 
   waveBrushes[TRANSITION_RING].setColor(paintColor);
-
 }
 
 void loop() {
@@ -123,6 +123,7 @@ void loop() {
   for(uint8_t i=0; i < RING_COUNT; i++) {
     whorl[i].clear();
     for (uint8_t j=0; j < whorl[i].numPixels(); j++) {
+      // TRANSITION_RING gets its own background color
       if (i == TRANSITION_RING) {
         whorl[i].setPixelColor(j, cPinkySwearBackground);
       } else {
@@ -149,10 +150,8 @@ void loop() {
 }
 
 void checkBrushesAndCanvases() {
-  //check if ram allocation of brushes and canvases was successful (painting will not work if unsuccessful, program should still run though)
   //this check is optional but helps to check if something does not work, especially on low ram chips like the Arduino Uno
   for(int i=0; i < RING_COUNT; i++) {
-  
     Serial.print("checking ring number: ");
     Serial.println(i);
     if (pixelCanvases[i].isvalid() == false) Serial.println("canvas allocation problem");
