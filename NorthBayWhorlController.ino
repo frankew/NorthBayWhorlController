@@ -114,12 +114,10 @@ void setup() {
   }
   // the last ring is really short, so animation timing needs tweaked
   waveBrushes[9].setSpeed(1100);  
-  
   // the brush for the "TRANSITION_RING" gets readjusted to have a different color
   paintColor.h = 175; // Pink
   paintColor.s = 255; 
   waveBrushes[TRANSITION_RING].setColor(paintColor);
-  
 }
 
 void loop() {
@@ -150,7 +148,6 @@ void loop() {
   for(int i=0; i < RING_COUNT; i++) {
     whorl[i].show();
   }
-
 }
 
 void checkBrushesAndCanvases() {
