@@ -27,8 +27,7 @@
 #define RING_COUNT 10
 #define TRANSITION_RING 7
 
-// Called rings, but actually strips. 
-// typedef Adafruit_NeoPixel* NeoPixPointer;
+// Called rings, but actually neopixel strips. 
 Adafruit_NeoPixel whorl[RING_COUNT] = {
   Adafruit_NeoPixel(RING0_LENGTH, RING0_PIN, NEO_GRB + NEO_KHZ800),
   Adafruit_NeoPixel(RING1_LENGTH, RING1_PIN, NEO_GRB + NEO_KHZ800),
@@ -42,8 +41,8 @@ Adafruit_NeoPixel whorl[RING_COUNT] = {
   Adafruit_NeoPixel(RING9_LENGTH, RING9_PIN, NEO_GRB + NEO_KHZ800)
 };
 
-//create canvas, linked to the neopixels (must be created before the brush)
-NeoPixelPainterCanvas pixelCanvases[] = {
+//create canvases for each strip of neopixel strips in whorl[]
+NeoPixelPainterCanvas whorlCanvases[] = {
   NeoPixelPainterCanvas(&whorl[0]),    
   NeoPixelPainterCanvas(&whorl[1]),   
   NeoPixelPainterCanvas(&whorl[2]),   
@@ -56,20 +55,21 @@ NeoPixelPainterCanvas pixelCanvases[] = {
   NeoPixelPainterCanvas(&whorl[9])  
 };
 
-//create brushes, linked to the canvas
+// create brushes, linked to the canvases in whorlCanvases[]
 NeoPixelPainterBrush waveBrushes[] = {
-  NeoPixelPainterBrush(&pixelCanvases[0]),
-  NeoPixelPainterBrush(&pixelCanvases[1]),
-  NeoPixelPainterBrush(&pixelCanvases[2]),
-  NeoPixelPainterBrush(&pixelCanvases[3]),
-  NeoPixelPainterBrush(&pixelCanvases[4]),
-  NeoPixelPainterBrush(&pixelCanvases[5]),
-  NeoPixelPainterBrush(&pixelCanvases[6]),
-  NeoPixelPainterBrush(&pixelCanvases[7]),
-  NeoPixelPainterBrush(&pixelCanvases[8]),
-  NeoPixelPainterBrush(&pixelCanvases[9])
+  NeoPixelPainterBrush(&whorlCanvases[0]),
+  NeoPixelPainterBrush(&whorlCanvases[1]),
+  NeoPixelPainterBrush(&whorlCanvases[2]),
+  NeoPixelPainterBrush(&whorlCanvases[3]),
+  NeoPixelPainterBrush(&whorlCanvases[4]),
+  NeoPixelPainterBrush(&whorlCanvases[5]),
+  NeoPixelPainterBrush(&whorlCanvases[6]),
+  NeoPixelPainterBrush(&whorlCanvases[7]),
+  NeoPixelPainterBrush(&whorlCanvases[8]),
+  NeoPixelPainterBrush(&whorlCanvases[9])
 };
 
+// Minimum background color so the pixels are never completely off. 
 uint32_t cTurqsBackground = whorl[0].ColorHSV(29120,  250,  25);
 uint32_t cPinkySwearBackground = whorl[0].ColorHSV(57000,  250,  15);
 
@@ -80,7 +80,7 @@ void setup() {
   Serial.begin(115200);      // Just for development
   checkBrushesAndCanvases(); // check if ram allocation of brushes and canvases was successful (painting will not work if unsuccessful, program should still run though)
 
-  // Setup  neopixels
+  // Set up the neopixel whorl
   pinMode(RING0_PIN, OUTPUT);
   pinMode(RING1_PIN, OUTPUT);
   pinMode(RING2_PIN, OUTPUT);
@@ -96,7 +96,7 @@ void setup() {
     whorl[i].setBrightness(100);
   }
 
-  // Configure the brushes
+  // Set up the brushes
   HSV paintColor;
   paintColor.h = 90; // random(115, 135); //  
   paintColor.s = 195; 
@@ -112,14 +112,18 @@ void setup() {
     waveBrushes[i].setFadeSpeed(fadeSpeed);
     waveBrushes[i].setColor(paintColor);
   }
-  // the brush the "TRANSITION_RING" gets readjusted 
+  // the last ring is really short, so animation timing needs tweaked
+  waveBrushes[9].setSpeed(1100);  
+  
+  // the brush for the "TRANSITION_RING" gets readjusted to have a different color
   paintColor.h = 175; // Pink
   paintColor.s = 255; 
   waveBrushes[TRANSITION_RING].setColor(paintColor);
+  
 }
 
 void loop() {
-  // clear the neopixels and set fresh background colors
+  // clear the neopixels and reset the minimum background colors
   for(uint8_t i=0; i < RING_COUNT; i++) {
     whorl[i].clear();
     for (uint8_t j=0; j < whorl[i].numPixels(); j++) {
@@ -139,7 +143,7 @@ void loop() {
 
   // transfer canvases to the neopixels
   for(int i=0; i < RING_COUNT; i++) {
-    pixelCanvases[i].transfer();
+    whorlCanvases[i].transfer();
   }  
   
   // show the neopixels
@@ -154,7 +158,7 @@ void checkBrushesAndCanvases() {
   for(int i=0; i < RING_COUNT; i++) {
     Serial.print("checking ring number: ");
     Serial.println(i);
-    if (pixelCanvases[i].isvalid() == false) Serial.println("canvas allocation problem");
+    if (whorlCanvases[i].isvalid() == false) Serial.println("canvas allocation problem");
       else  Serial.println("canvas allocation ok");
       
     if (waveBrushes[i].isvalid() == false) Serial.println("wavebrush allocation problem");
