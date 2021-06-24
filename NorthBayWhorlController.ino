@@ -1,7 +1,6 @@
 #include <Adafruit_NeoPixel.h>
 #include <NeoPixelPainter.h>
 
-
 #define RING0_PIN  46 // 51
 #define RING1_PIN  44 // 49
 #define RING2_PIN  42 // 47
@@ -55,8 +54,8 @@ NeoPixelPainterCanvas whorlCanvases[] = {
   NeoPixelPainterCanvas(&whorl[9])  
 };
 
-// create brushes, linked to the canvases in whorlCanvases[]
-NeoPixelPainterBrush waveBrushes[] = {
+// We have 4 'waves" of color (brushes) that move along each strip
+NeoPixelPainterBrush wave0[] = {
   NeoPixelPainterBrush(&whorlCanvases[0]),
   NeoPixelPainterBrush(&whorlCanvases[1]),
   NeoPixelPainterBrush(&whorlCanvases[2]),
@@ -68,7 +67,7 @@ NeoPixelPainterBrush waveBrushes[] = {
   NeoPixelPainterBrush(&whorlCanvases[8]),
   NeoPixelPainterBrush(&whorlCanvases[9])
 };
-NeoPixelPainterBrush wave2Brushes[] = {
+NeoPixelPainterBrush wave1[] = {
   NeoPixelPainterBrush(&whorlCanvases[0]),
   NeoPixelPainterBrush(&whorlCanvases[1]),
   NeoPixelPainterBrush(&whorlCanvases[2]),
@@ -80,7 +79,7 @@ NeoPixelPainterBrush wave2Brushes[] = {
   NeoPixelPainterBrush(&whorlCanvases[8]),
   NeoPixelPainterBrush(&whorlCanvases[9])
 };
-NeoPixelPainterBrush wave3Brushes[] = {
+NeoPixelPainterBrush wave2[] = {
   NeoPixelPainterBrush(&whorlCanvases[0]),
   NeoPixelPainterBrush(&whorlCanvases[1]),
   NeoPixelPainterBrush(&whorlCanvases[2]),
@@ -92,7 +91,7 @@ NeoPixelPainterBrush wave3Brushes[] = {
   NeoPixelPainterBrush(&whorlCanvases[8]),
   NeoPixelPainterBrush(&whorlCanvases[9])
 };
-NeoPixelPainterBrush wave4Brushes[] = {
+NeoPixelPainterBrush wave3[] = {
   NeoPixelPainterBrush(&whorlCanvases[0]),
   NeoPixelPainterBrush(&whorlCanvases[1]),
   NeoPixelPainterBrush(&whorlCanvases[2]),
@@ -106,9 +105,6 @@ NeoPixelPainterBrush wave4Brushes[] = {
 };
 
 void setup() {
-
-  randomSeed(analogRead(0)); //some noise for random seed 
-
   // Serial.begin(115200);      // Just for development
   // checkBrushesAndCanvases(); // check if ram allocation of brushes and canvases was successful (painting will not work if unsuccessful, program should still run though)
 
@@ -128,82 +124,83 @@ void setup() {
     whorl[i].setBrightness(125);
   }
 
-  // Set up the brushes
-  int speedFactor = 20; // 4096 is max for brushSpeed
-  float fadeFactor = 110; // 255 is max for fadeSpeed
-  bool shouldFadeOut = true;
-  bool shouldFadeIn = true;
-  
-  // NeoPixelPainter uses a struct for color instead of NeoPixel's 32bit integers
-  HSV waveColor;
-  waveColor.h = 140; // random(115, 135); //  
+  // Configure the waves of color. Each wave has one brush for each strip in the whorl
+  HSV waveColor; // NeoPixelPainter uses a struct for color instead of NeoPixel's 32bit integers
   waveColor.s = 255; 
   waveColor.v = 170; 
+  bool shouldFadeIn = true;
+  bool shouldFadeOut = true;
+  // We use the length of the strips to scale these values
+  int speedFactor = 20; // 4096 is max for brushSpeed
+  float fadeFactor = 110; // 255 is max for fadeSpeed
+
+  // First Wave
+  waveColor.h = 140; 
   for(uint8_t i=0; i < RING_COUNT; i++) {
-    waveBrushes[i].setColor(waveColor);
-    waveBrushes[i].setFadein(shouldFadeIn);
-    waveBrushes[i].setFadeout(shouldFadeOut); 
-    waveBrushes[i].setFadeSpeed(fadeFactor + whorl[i].numPixels() );
-    waveBrushes[i].setSpeed( speedFactor * whorl[i].numPixels() ); 
+    wave0[i].setColor(waveColor);
+    wave0[i].setFadein(shouldFadeIn);
+    wave0[i].setFadeout(shouldFadeOut); 
+    wave0[i].setFadeSpeed(fadeFactor + whorl[i].numPixels() );
+    wave0[i].setSpeed( speedFactor * whorl[i].numPixels() ); 
   }
   
+  // Second Wave
   waveColor.h = 120; // Turqs  
   for(uint8_t i=0; i < RING_COUNT; i++) {
-    wave2Brushes[i].setColor(waveColor);
-    wave2Brushes[i].setFadein(shouldFadeIn);
-    wave2Brushes[i].setFadeout(shouldFadeOut);
-    wave2Brushes[i].setFadeSpeed(fadeFactor + whorl[i].numPixels() );
-    wave2Brushes[i].setSpeed( speedFactor * whorl[i].numPixels() );
-    wave2Brushes[i].moveTo( whorl[i].numPixels() * .25 );
+    wave1[i].setColor(waveColor);
+    wave1[i].setFadein(shouldFadeIn);
+    wave1[i].setFadeout(shouldFadeOut);
+    wave1[i].setFadeSpeed( fadeFactor + whorl[i].numPixels() + 40 );
+    wave1[i].setSpeed( speedFactor * whorl[i].numPixels() );
+    wave1[i].moveTo( whorl[i].numPixels() * .25 );
   }
 
+  // Third Wave
   waveColor.h = 110; // 
   waveColor.v = 200; 
   waveColor.s = 225;
-  // fadeFactor = 60;
   for(uint8_t i=0; i < RING_COUNT; i++) {
-    wave3Brushes[i].setColor(waveColor);
-    wave3Brushes[i].setFadein(shouldFadeIn);
-    wave3Brushes[i].setFadeout(shouldFadeOut);
-    wave3Brushes[i].setFadeSpeed(fadeFactor + whorl[i].numPixels() );
-    wave3Brushes[i].setSpeed( speedFactor * whorl[i].numPixels() );
-    wave3Brushes[i].moveTo( whorl[i].numPixels() *  .5 );
+    wave2[i].setColor(waveColor);
+    wave2[i].setFadein(shouldFadeIn);
+    wave2[i].setFadeout(shouldFadeOut);
+    wave2[i].setFadeSpeed(fadeFactor + whorl[i].numPixels() );
+    wave2[i].setSpeed( speedFactor * whorl[i].numPixels() );
+    wave2[i].moveTo( whorl[i].numPixels() *  .5 );
   }
   
+  // Fourth Wave
   waveColor.h = 120; // 
   waveColor.v = 200; 
   waveColor.s = 225;
-  // fadeFactor = 60;
   for(uint8_t i=0; i < RING_COUNT; i++) {
-    wave4Brushes[i].setColor(waveColor);
-    wave4Brushes[i].setFadein(shouldFadeIn);
-    wave4Brushes[i].setFadeout(shouldFadeOut);
-    wave4Brushes[i].setFadeSpeed(fadeFactor + whorl[i].numPixels() );
-    wave4Brushes[i].setSpeed( speedFactor * whorl[i].numPixels() );
-    wave4Brushes[i].moveTo( whorl[i].numPixels() * .75 );
+    wave3[i].setColor(waveColor);
+    wave3[i].setFadein(shouldFadeIn);
+    wave3[i].setFadeout(shouldFadeOut);
+    wave3[i].setFadeSpeed(fadeFactor + whorl[i].numPixels() );
+    wave3[i].setSpeed( speedFactor * whorl[i].numPixels() );
+    wave3[i].moveTo( whorl[i].numPixels() * .75 );
   }
 
-  
-  // the brush for the "TRANSITION_RING" gets readjusted to have a different color
+  // the brushes for the "TRANSITION_RING" get readjusted
   waveColor.h = 180; // Purple
   waveColor.s = 255; 
-  waveBrushes[TRANSITION_RING].setColor(waveColor);
-  waveBrushes[TRANSITION_RING].setFadeSpeed( 250 );
+  wave0[TRANSITION_RING].setColor(waveColor);
+  wave0[TRANSITION_RING].setFadeSpeed( 250 );
   
   waveColor.h = 220; // Pink
   waveColor.v = 255;
-  wave2Brushes[TRANSITION_RING].setColor(waveColor);
-  wave2Brushes[TRANSITION_RING].setFadeSpeed( 150 );
+  wave1[TRANSITION_RING].setColor(waveColor);
+  wave1[TRANSITION_RING].setFadeSpeed( 150 );
   
   waveColor.h = 220;
   waveColor.v = 155;
-  wave3Brushes[TRANSITION_RING].setColor(waveColor);
-  wave3Brushes[TRANSITION_RING].setFadeSpeed( 250 );
+  wave2[TRANSITION_RING].setColor(waveColor);
+  wave2[TRANSITION_RING].setFadeSpeed( 250 );
   
   waveColor.h = 190;
   waveColor.v = 160;
-  wave4Brushes[TRANSITION_RING].setColor(waveColor);
-  wave4Brushes[TRANSITION_RING].setFadeSpeed( 250 );
+  wave3[TRANSITION_RING].setColor(waveColor);
+  wave3[TRANSITION_RING].setFadeSpeed( 250 );
 }
 
 void loop() {
@@ -214,10 +211,10 @@ void loop() {
     
   // paint the canvases (and update brushes)
   for(int i=0; i < RING_COUNT; i++) {
-    waveBrushes[i].paint(); 
-    wave2Brushes[i].paint();
-    wave3Brushes[i].paint();
-    wave4Brushes[i].paint();
+    wave0[i].paint(); 
+    wave1[i].paint();
+    wave2[i].paint();
+    wave3[i].paint();
   }  
 
   // transfer canvases to the neopixels
@@ -239,7 +236,7 @@ void checkBrushesAndCanvases() {
     if (whorlCanvases[i].isvalid() == false) Serial.println("canvas allocation problem");
       else  Serial.println("canvas allocation ok");
       
-    if (waveBrushes[i].isvalid() == false) Serial.println("wavebrush allocation problem");
+    if (wave0[i].isvalid() == false) Serial.println("wavebrush allocation problem");
       else  Serial.println("wavebrush allocation ok");
 
   }  
