@@ -134,8 +134,8 @@ void setup() {
   int speedFactor = 20; // 4096 is max for brushSpeed
   float fadeFactor = 110; // 255 is max for fadeSpeed
   // All the brushes are initially set to the blue-turquoise scheme.
-  // First Wave
-  currentColor.h = 140; // Aquamarine
+  // First Wave - Aquamarine
+  currentColor.h = 140;
   for(uint8_t i=0; i < RING_COUNT; i++) {
     wave0[i].setColor(currentColor);
     wave0[i].setFadein(shouldFadeIn);
@@ -143,8 +143,8 @@ void setup() {
     wave0[i].setFadeSpeed(fadeFactor + whorl[i].numPixels() );
     wave0[i].setSpeed( speedFactor * whorl[i].numPixels() ); 
   }
-  // Second Wave
-  currentColor.h = 120; // Turquoise
+  // Second Wave - Turquoise
+  currentColor.h = 120;
   for(uint8_t i=0; i < RING_COUNT; i++) {
     wave1[i].setColor(currentColor);
     wave1[i].setFadein(shouldFadeIn);
@@ -153,8 +153,8 @@ void setup() {
     wave1[i].setSpeed( speedFactor * whorl[i].numPixels() );
     wave1[i].moveTo( whorl[i].numPixels() * .25 );
   }
-  // Third Wave
-  currentColor.h = 110; // Seafoam
+  // Third Wave - Seafoam
+  currentColor.h = 110;
   currentColor.s = 225;
   currentColor.v = 200; 
   for(uint8_t i=0; i < RING_COUNT; i++) {
@@ -165,8 +165,8 @@ void setup() {
     wave2[i].setSpeed( speedFactor * whorl[i].numPixels() );
     wave2[i].moveTo( whorl[i].numPixels() *  .5 );
   }
-  // Fourth Wave
-  currentColor.h = 120; // Turquoise
+  // Fourth Wave - Turquoise
+  currentColor.h = 120;
   currentColor.s = 225;
   currentColor.v = 200; 
   for(uint8_t i=0; i < RING_COUNT; i++) {
@@ -179,21 +179,22 @@ void setup() {
   }
 
   // the brushes for the "TRANSITION_RING" get readjusted
-  currentColor.h = 180; // Violet
+  // Violet
+  currentColor.h = 180; 
   currentColor.s = 255; 
   wave0[TRANSITION_RING].setColor(currentColor);
   wave0[TRANSITION_RING].setFadeSpeed( 250 );
-  
-  currentColor.h = 220; // Pink
+  // Pink
+  currentColor.h = 220; 
   currentColor.v = 255;
   wave1[TRANSITION_RING].setColor(currentColor);
   wave1[TRANSITION_RING].setFadeSpeed( 150 );
-  
-  currentColor.v = 155; // Darker Pink
+  // Darker Pink
+  currentColor.v = 155; 
   wave2[TRANSITION_RING].setColor(currentColor);
   wave2[TRANSITION_RING].setFadeSpeed( 250 );
-  
-  currentColor.h = 190; // Purple
+  // Purple
+  currentColor.h = 190; 
   currentColor.v = 160;
   wave3[TRANSITION_RING].setColor(currentColor);
   wave3[TRANSITION_RING].setFadeSpeed( 250 );
@@ -216,10 +217,10 @@ void loop() {
   // transfer canvases to the neopixels
   for(int i=0; i < RING_COUNT; i++) {
     whorlCanvases[i].transfer();
-  }  
-  
-  // show the neopixels
-  for(int i=0; i < RING_COUNT; i++) {
+  // }  
+  // 
+  // // show the neopixels
+  // for(int i=0; i < RING_COUNT; i++) {
     whorl[i].show();
   }
 }
