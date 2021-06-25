@@ -126,7 +126,6 @@ void setup() {
 
   // Configure the waves of color. Each wave is an array of brushes, one each strip (ring) in the whorl. The brushes are positioned along the strip and follow/interfere with each other to create a semi-random rotating wave effect. 
   // All the brushes are initially set to the blue-turquoise scheme, then the brushes for the "TRANSITION_RING" get readjusted.
-  
   HSV currentColor; // NeoPixelPainter uses a struct for color instead of NeoPixel's 32bit integers
   currentColor.s = 255; 
   currentColor.v = 170; 
@@ -206,7 +205,7 @@ void loop() {
     whorl[i].clear();
   }
     
-  // "paint" the current postition of each waves on each strip's "canvas" (and update brushes)
+  // "paint" the current position of the waves on each strip's "canvas" (implicitly updates brushes position for next loop)
   for(int i=0; i < RING_COUNT; i++) {
     wave0[i].paint(); 
     wave1[i].paint();
