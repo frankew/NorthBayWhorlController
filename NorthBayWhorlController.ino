@@ -205,7 +205,7 @@ void loop() {
     whorl[i].clear();
   }
     
-  // "paint" the current position of the waves on each strip's "canvas" (implicitly updates brushes position for next loop)
+  // "paint" the current position of the waves on each strip's NeoPixelPainter "canvas" (implicitly updates brushes position for next loop)
   for(int i=0; i < RING_COUNT; i++) {
     wave0[i].paint(); 
     wave1[i].paint();
@@ -213,13 +213,9 @@ void loop() {
     wave3[i].paint();
   }  
 
-  // transfer canvases to the neopixels
+  // transfer canvases to the neopixels and show the result
   for(int i=0; i < RING_COUNT; i++) {
     whorlCanvases[i].transfer();
-  // }  
-  // 
-  // // show the neopixels
-  // for(int i=0; i < RING_COUNT; i++) {
     whorl[i].show();
   }
 }
