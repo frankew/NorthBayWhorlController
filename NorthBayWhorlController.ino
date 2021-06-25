@@ -121,7 +121,7 @@ void setup() {
   pinMode(RING9_PIN, OUTPUT);
   for(uint8_t i=0; i < RING_COUNT; i++) {
     whorl[i].begin();
-    whorl[i].setBrightness(125);
+    whorl[i].setBrightness(125); // This is to keep power consumption within the ability of the ~3a power supply.
   }
 
   // Configure the waves of color. Each wave is an array of brushes, one each strip (ring) in the whorl. The brushes are positioned along the strip and follow/interfere with each other to create a semi-random rotating wave effect. 
