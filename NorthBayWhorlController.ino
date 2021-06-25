@@ -124,16 +124,16 @@ void setup() {
     whorl[i].setBrightness(125);
   }
 
-  // Configure the waves of color. Each wave is an array of brushes for each strip (ring) in the whorl
+  // Configure the waves of color. Each wave is an array of brushes, one each strip (ring) in the whorl. The brushes are positioned along the strip and follow/interfere with each other to create a semi-random rotating wave effect. 
+  // All the brushes are initially set to the blue-turquoise scheme, then the brushes for the "TRANSITION_RING" get readjusted.
+  
   HSV currentColor; // NeoPixelPainter uses a struct for color instead of NeoPixel's 32bit integers
   currentColor.s = 255; 
   currentColor.v = 170; 
   bool shouldFadeIn = true;
   bool shouldFadeOut = true;
-  // We use the length of the specific strips to scale these values in the loops below
-  int speedFactor = 20; // 4096 is max for brushSpeed
-  float fadeFactor = 110; // 255 is max for fadeSpeed
-  // All the brushes are initially set to the blue-turquoise scheme.
+  int speedFactor = 20; // 4096 is max for brushSpeed  //    The length of the specific strips 
+  float fadeFactor = 110; // 255 is max for fadeSpeed  //    is used to scale these 'Factor values
   // First Wave - Aquamarine
   currentColor.h = 140;
   for(uint8_t i=0; i < RING_COUNT; i++) {
@@ -178,7 +178,7 @@ void setup() {
     wave3[i].moveTo( whorl[i].numPixels() * .75 );
   }
 
-  // the brushes for the "TRANSITION_RING" get readjusted
+  // Handle the "TRANSITION_RING"
   // Violet
   currentColor.h = 180; 
   currentColor.s = 255; 
@@ -206,7 +206,7 @@ void loop() {
     whorl[i].clear();
   }
     
-  // "paint" the waves on each strip's "canvas" (and update brushes)
+  // "paint" the current postition of each waves on each strip's "canvas" (and update brushes)
   for(int i=0; i < RING_COUNT; i++) {
     wave0[i].paint(); 
     wave1[i].paint();
