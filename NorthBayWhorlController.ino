@@ -24,7 +24,7 @@
 #define RING9_LENGTH  15
 
 #define RING_COUNT 10
-#define TRANSITION_RING 7
+#define TRANSITION_RING 7 // Most rings are like the others except the transition ring, which is pinkish instead of greenish. 
 
 // Called rings, but actually neopixel strips. 
 Adafruit_NeoPixel whorl[RING_COUNT] = {
@@ -124,8 +124,8 @@ void setup() {
     whorl[i].setBrightness(125); // This is to keep power consumption within the ability of the ~3a power supply.
   }
 
-  // Configure the waves of color. Each wave is an array of brushes, one each strip (ring) in the whorl. The brushes are positioned along the strip and follow/interfere with each other to create a semi-random rotating wave effect. 
-  // All the brushes are initially set to the blue-turquoise scheme, then the brushes for the "TRANSITION_RING" get readjusted.
+  // Configure the waves of color. Each wave is an array of brushes, containing one for each strip (ring) in the whorl. 4 waves of brushes = four waves of moving color along each strip. The brushes are positioned along the strips and follow/interfere with each other to create a semi-random rotating wave effect. 
+  // All the brushes are initially set to the blue-green scheme, then the brushes for the "TRANSITION_RING" get readjusted.
   HSV currentColor; // NeoPixelPainter uses a struct for color instead of NeoPixel's 32bit integers
   currentColor.s = 255; 
   currentColor.v = 170; 
